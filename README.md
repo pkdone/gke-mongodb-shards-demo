@@ -33,23 +33,19 @@ Ensure the following dependencies are already fulfilled on your host Linux/Windo
 
 Using a command-line terminal/shell, execute the following (first change the password variable in the script "generate.sh", if appropriate):
 
-    ```
     $ cd scripts
     $ ./generate.sh
-    ```
+    
+This takes a few minutes to complete. Once completed, you should have a MongoDB Sharded Cluster initialised, secured and running in some Kubernetes StatefulSets/Deployments. The executed bash script will have created the following resources:
 
-This takes a few minutes to complete. Once completed, you should have a MongoDB Sharded Cluster initialised, secured and running in a Kubernetes Stateful Set. The execute bash script should have created the following:
+* 1x Config Server Replica Set containing 3x replicas (deployment type: "StatefulSet")
+* 3x Shards with each Shard being a Replica Set containing 3x replicas (deployment type: "StatefulSet")
+* 2x Mongos Routers (deployment type: "Deployment")
 
-* 1 Config Server Replica Set containing 3 replicas (deployment type: "StatefulSet")
-* 3 Shards with each Shard being a Replica Set containing 3 replicas (deployment type: "StatefulSet")
-* 2 Mongos Routers (deployment type: "Deployment")
+You can view the list of Pods that contain these MongoDB resources, by running the following:
 
-You can view the list of Pods that contain these MongoDB resources by runnining the following:
-
-    ```
     $ kubectl get pods
-    ```
-
+    
 You can also view the the state of the deployed environment via the [Google Cloud Platform Console](https://console.cloud.google.com) (look at both the “Container Engine” and the “Compute Engine” sections of the Console).
 
 ### 1.3 Test Sharding Your Own Collection
