@@ -77,7 +77,7 @@ It is also worth checking in the [Google Cloud Platform Console](https://console
 
 * Deployment of a MongoDB on GKE's Kubernetes platform
 * Use of Kubernetes StatefulSets and PersistentVolumeClaims to ensure data is not lost when containers are recycled
-* Proper configuration of a MongoDB Sharded Cluster for full resiliency
+* Proper configuration of a MongoDB Sharded Cluster for Scalability with each Shard being a Replica Set for full resiliency
 * Securing MongoDB by default for new deployments
 * Leveraging XFS filesystem for data file storage to improve performance
 * Disabling Transparent Huge Pages to improve performance
