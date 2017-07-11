@@ -1,0 +1,59 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: mongos
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        role: mongos
+        tier: routers
+        replicaset: routers
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: replicaset
+                  operator: In
+                  values:
+                  - routers
+              topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - name: secrets-volume
+          secret:
+            secretName: shared-bootstrap-data
+            defaultMode: 256
+      containers:
+        - name: mongos-container
+          image: mongo
+          command:
+            - "numactl"
+            - "--interleave=all"
+            - "mongos"
+            - "--port"
+            - "27017"
+            - "--configdb"
+            - "ConfigDBRepSet/mongod-configdb-0.mongodb-configdb-service.default.svc.cluster.local:27017,mongod-configdb-1.mongodb-configdb-service.default.svc.cluster.local:27017,mongod-configdb-2.mongodb-configdb-service.default.svc.cluster.local:27017"
+            - "--clusterAuthMode"
+            - "keyFile"
+            - "--keyFile"
+            - "/etc/secrets-volume/internal-auth-mongodb-keyfile"
+            - "--setParameter"
+            - "authenticationMechanisms=SCRAM-SHA-1"
+          resources:
+            requests:
+              cpu: 0.25
+              memory: 512Mi
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: secrets-volume
+              readOnly: true
+              mountPath: /etc/secrets-volume
+
