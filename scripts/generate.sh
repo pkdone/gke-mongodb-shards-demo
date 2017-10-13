@@ -6,10 +6,10 @@
 NEW_PASSWORD="abc123"
 
 
-# Create new GKE Kubernetes cluster (using host node VM images based on Debian
+# Create new GKE Kubernetes cluster (using host node VM images based on Ubuntu
 # rather than ChromiumOS default & also use slightly larger VMs than default)
 echo "Creating GKE Cluster"
-gcloud container clusters create "gke-mongodb-demo-cluster" --image-type=CONTAINER_VM --machine-type=n1-standard-2
+gcloud container clusters create "gke-mongodb-demo-cluster" --image-type=UBUNTU --machine-type=n1-standard-2
 
 
 # Configure host VM using daemonset to add XFS mounting support and disable hugepages
