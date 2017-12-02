@@ -1,6 +1,6 @@
 # MongoDB Sharded Cluster Deployment Demo for Kubernetes on GKE
 
-An example project demonstrating the deployment of a MongoDB Sharded Cluster via Kubernetes on the Google Container Platform (GKE), using Kubernetes' feature StatefulSet. Contains example Kubernetes YAML resource files (in the 'resource' folder) and associated Kubernetes based Bash scripts (in the 'scripts' folder) to configure the environment and deploy a MongoDB Replica Set.
+An example project demonstrating the deployment of a MongoDB Sharded Cluster via Kubernetes on the Google Kubernetes Engine (GKE), using Kubernetes' feature StatefulSet. Contains example Kubernetes YAML resource files (in the 'resource' folder) and associated Kubernetes based Bash scripts (in the 'scripts' folder) to configure the environment and deploy a MongoDB Replica Set.
 
 For further background information on what these scripts and resource files do, plus general information about running MongoDB with Kubernetes, see: [http://k8smongodb.net/](http://k8smongodb.net/)
 
@@ -41,7 +41,7 @@ You can view the list of Pods that contain these MongoDB resources, by running t
 
     $ kubectl get pods
     
-You can also view the the state of the deployed environment via the [Google Cloud Platform Console](https://console.cloud.google.com) (look at both the “Container Engine” and the “Compute Engine” sections of the Console).
+You can also view the the state of the deployed environment via the [Google Cloud Platform Console](https://console.cloud.google.com) (look at both the “Kubernetes Engine” and the “Compute Engine” sections of the Console).
 
 ### 1.3 Test Sharding Your Own Collection
 
@@ -70,7 +70,7 @@ It is also worth checking in the [Google Cloud Platform Console](https://console
 
 ## 2 Factors Addressed By This Project
 
-* Deployment of a MongoDB on GKE's Kubernetes platform
+* Deployment of a MongoDB on the Google Kubernetes Engine
 * Use of Kubernetes StatefulSets and PersistentVolumeClaims to ensure data is not lost when containers are recycled
 * Proper configuration of a MongoDB Sharded Cluster for Scalability with each Shard being a Replica Set for full resiliency
 * Securing MongoDB by default for new deployments
