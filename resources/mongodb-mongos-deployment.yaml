@@ -31,7 +31,7 @@ spec:
             defaultMode: 256
       containers:
         - name: mongos-container
-          image: mongo
+          image: mongo:3.4.10
           command:
             - "numactl"
             - "--interleave=all"

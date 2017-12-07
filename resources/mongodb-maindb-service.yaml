@@ -46,7 +46,7 @@ spec:
             defaultMode: 256
       containers:
         - name: mongod-shardX-container
-          image: mongo
+          image: mongo:3.4.10
           command:
             - "numactl"
             - "--interleave=all"
