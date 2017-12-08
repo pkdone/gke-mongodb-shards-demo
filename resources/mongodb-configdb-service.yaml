@@ -55,6 +55,8 @@ spec:
             - "27017"
             - "--wiredTigerCacheSizeGB"
             - "0.25"
+            - "--bind_ip"
+            - "0.0.0.0"
             - "--configsvr"
             - "--replSet"
             - "ConfigDBRepSet"
