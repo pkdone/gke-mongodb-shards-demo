@@ -50,7 +50,7 @@ The running mongos routers will be accessible to any "app tier" containers, that
 
 ### 1.3 Test Sharding Your Own Collection
 
-To test that the sharded cluster is working properly, connect to the container running the first "mongos" router, then use the Mongo Shell to authenticate, enable sharding on a specific collection, ad    d some test data to this collection and then view the status of the Sharded cluster and collection:
+To test that the sharded cluster is working properly, connect to the container running the first "mongos" router, then use the Mongo Shell to authenticate, enable sharding on a specific collection, add some test data to this collection and then view the status of the Sharded cluster and collection:
 
     $ kubectl exec -it mongos-router-0 -c mongos-container bash
     $ mongo
