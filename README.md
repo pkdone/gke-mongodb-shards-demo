@@ -31,11 +31,11 @@ Using a command-line terminal/shell, execute the following (first change the pas
     $ cd scripts
     $ ./generate.sh
     
-This takes a few minutes to complete. Once completed, you should have a MongoDB Sharded Cluster initialised, secured and running in some Kubernetes StatefulSets/Deployments. The executed bash script will have created the following resources:
+This takes a few minutes to complete. Once completed, you should have a MongoDB Sharded Cluster initialised, secured and running in some Kubernetes StatefulSets. The executed bash script will have created the following resources:
 
 * 1x Config Server Replica Set containing 3x replicas (k8s deployment type: "StatefulSet")
 * 3x Shards with each Shard being a Replica Set containing 3x replicas (k8s deployment type: "StatefulSet")
-* 2x Mongos Routers (k8s deployment type: "Deployment")
+* 2x Mongos Routers (k8s deployment type: "StatefulSet")
 
 You can view the list of Pods that contain these MongoDB resources, by running the following:
 
@@ -43,11 +43,16 @@ You can view the list of Pods that contain these MongoDB resources, by running t
     
 You can also view the the state of the deployed environment via the [Google Cloud Platform Console](https://console.cloud.google.com) (look at both the “Kubernetes Engine” and the “Compute Engine” sections of the Console).
 
+The running mongos routers will be accessible to any "app tier" containers, that are running in the same Kubernetes cluster, via the following hostnames and ports (remember to also specify the username and password, when connecting to the database):
+
+    mongos-router-0.mongos-router-service.default.svc.cluster.local:27017
+    mongos-router-1.mongos-router-service.default.svc.cluster.local:27017
+
 ### 1.3 Test Sharding Your Own Collection
 
-To test that the sharded cluster is working properly, connect to the container running the first "mongos" router, then use the Mongo Shell to authenticate, enable sharding on a specific collection, add some test data to this collection and then view the status of the Sharded cluster and collection:
+To test that the sharded cluster is working properly, connect to the container running the first "mongos" router, then use the Mongo Shell to authenticate, enable sharding on a specific collection, ad    d some test data to this collection and then view the status of the Sharded cluster and collection:
 
-    $ kubectl exec -it $(kubectl get pod -l "tier=routers" -o jsonpath='{.items[0].metadata.name}') -c mongos-container bash
+    $ kubectl exec -it mongos-router-0 -c mongos-container bash
     $ mongo
     > db.getSiblingDB('admin').auth("main_admin", "abc123");
     > sh.enableSharding("test");
@@ -61,7 +66,7 @@ To test that the sharded cluster is working properly, connect to the container r
 
 **Important:** This step is required to ensure you aren't continuously charged by Google Cloud for an environment you no longer need.
 
-Run the following script to undeploy the MongoDB Services & StatefulSets/Deployments plus related Kubernetes resources, followed by the removal of the GCE disks before finally deleting the GKE Kubernetes cluster.
+Run the following script to undeploy the MongoDB Services & StatefulSets plus related Kubernetes resources, followed by the removal of the GCE disks before finally deleting the GKE Kubernetes cluster.
 
     $ ./teardown.sh
     

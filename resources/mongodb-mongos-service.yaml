@@ -1,13 +1,28 @@
-apiVersion: apps/v1beta1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-  name: mongos
+  name: mongos-router-service
+  labels:
+    name: mongos-router
 spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+  clusterIP: None
+  selector:
+    role: mongos-router
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mongos-router
+spec:
+  serviceName: mongos-router-service
   replicas: 2
   template:
     metadata:
       labels:
-        role: mongos
+        role: mongos-router
         tier: routers
         replicaset: routers
     spec:

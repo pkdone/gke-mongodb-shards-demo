@@ -79,9 +79,9 @@ kubectl apply -f /tmp/mongodb-maindb-service.yaml
 rm /tmp/mongodb-maindb-service.yaml
 
 
-# Deploy some Mongos Routers using a Kubernetes Deployment
+# Deploy some Mongos Routers using a Kubernetes StatefulSet
 echo "Deploying GKE Deployment & Service for some Mongos Routers"
-kubectl apply -f ../resources/mongodb-mongos-deployment.yaml
+kubectl apply -f ../resources/mongodb-mongos-service.yaml
 
 
 # Wait until the final mongod of each Shard + the ConfigDB has started properly
@@ -138,7 +138,7 @@ echo
 echo "Waiting for the first mongos to come up (`date`)..."
 echo " (IGNORE any reported not found & connection errors)"
 echo -n "  "
-until kubectl --v=0 exec $(kubectl get pod -l "tier=routers" -o jsonpath='{.items[0].metadata.name}') -c mongos-container -- mongo --quiet --eval 'db.getMongo()'; do
+until kubectl --v=0 exec mongos-router-0 -c mongos-container -- mongo --quiet --eval 'db.getMongo()'; do
     sleep 2
     echo -n "  "
 done
@@ -148,15 +148,15 @@ echo
 
 # Add Shards to the Configdb
 echo "Configuring ConfigDB to be aware of the 3 Shards"
-kubectl exec $(kubectl get pod -l "tier=routers" -o jsonpath='{.items[0].metadata.name}') -c mongos-container -- mongo --eval 'sh.addShard("Shard1RepSet/mongod-shard1-0.mongodb-shard1-service.default.svc.cluster.local:27017");'
-kubectl exec $(kubectl get pod -l "tier=routers" -o jsonpath='{.items[0].metadata.name}') -c mongos-container -- mongo --eval 'sh.addShard("Shard2RepSet/mongod-shard2-0.mongodb-shard2-service.default.svc.cluster.local:27017");'
-kubectl exec $(kubectl get pod -l "tier=routers" -o jsonpath='{.items[0].metadata.name}') -c mongos-container -- mongo --eval 'sh.addShard("Shard3RepSet/mongod-shard3-0.mongodb-shard3-service.default.svc.cluster.local:27017");'
+kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'sh.addShard("Shard1RepSet/mongod-shard1-0.mongodb-shard1-service.default.svc.cluster.local:27017");'
+kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'sh.addShard("Shard2RepSet/mongod-shard2-0.mongodb-shard2-service.default.svc.cluster.local:27017");'
+kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'sh.addShard("Shard3RepSet/mongod-shard3-0.mongodb-shard3-service.default.svc.cluster.local:27017");'
 sleep 3
 
 
 # Create the Admin User (this will automatically disable the localhost exception)
 echo "Creating user: 'main_admin'"
-kubectl exec $(kubectl get pod -l "tier=routers" -o jsonpath='{.items[0].metadata.name}') -c mongos-container -- mongo --eval 'db.getSiblingDB("admin").createUser({user:"main_admin",pwd:"'"${NEW_PASSWORD}"'",roles:[{role:"root",db:"admin"}]});'
+kubectl exec mongos-router-0 -c mongos-container -- mongo --eval 'db.getSiblingDB("admin").createUser({user:"main_admin",pwd:"'"${NEW_PASSWORD}"'",roles:[{role:"root",db:"admin"}]});'
 echo
 
 

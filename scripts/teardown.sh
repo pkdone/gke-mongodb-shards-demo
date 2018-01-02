@@ -3,8 +3,9 @@
 # Script to remove/undepoy all project resources from GKE & GCE.
 ##
 
-# Delete mongos deployment + mongod stateful set + mongodb service + secrets + host vm configurer daemonset
-kubectl delete deployments mongos
+# Delete mongos stateful set + mongod stateful set + mongodb service + secrets + host vm configurer daemonset
+kubectl delete statefulsets mongos-router
+kubectl delete services mongos-router-service
 kubectl delete statefulsets mongod-shard1
 kubectl delete services mongodb-shard1-service
 kubectl delete statefulsets mongod-shard2
